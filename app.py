@@ -21,5 +21,12 @@ if st.button("使い方確認"):
 
 
 #データフレーム作成
-df = pd.read_csv("gaku-mg2532.csv")
+df = pd.read_csv("Data.csv")
 st.dataframe(df,width=800,height=220)
+
+#データ抽出
+with st.sidebar:
+  year = st.multiselect("年",
+                          df["year"].unique())
+  month = st.multiselect("月",
+                          df["month"].unique())
