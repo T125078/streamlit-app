@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-import matplotlib.pyplot as plt
 import plotly.express as px
 import time
 import streamlit.components.v1 as components
@@ -22,11 +21,38 @@ if st.button("使い方確認"):
 
 #データフレーム作成
 df = pd.read_csv("Data.csv")
-st.dataframe(df,width=800,height=220)
 
 #データ抽出
 with st.sidebar:
+  st.write("表に使うデータ抽出")
   year = st.multiselect("年",
                           df["year"].unique())
   month = st.multiselect("月",
                           df["month"].unique())
+
+df = df[df["year"].isin(year)]
+df = df[df["month"].isin(month)]
+st.dataframe(df,width=800,height=220)
+st.divider()
+
+#グラフ用データ抽出
+dfg_o = pd.read_csv("Data.csv")
+with st.sidebar:
+  st.write("グラフに使うデータ抽出")
+  select_1 = st.selectbox("x軸",
+                          ["国内総生産(支出側)","民間最終消費支出","家計最終消費支出","民間住宅","民間企業設備","民間在庫変動","政府最終消費支出"])
+  select_2 = st.selectbox("y軸",
+                          ["国内総生産(支出側)","民間最終消費支出","家計最終消費支出","民間住宅","民間企業設備","民間在庫変動","政府最終消費支出"])
+  
+fig = px.scatter(dfg_o,
+                 x=select_1,
+                 y=select_2,
+                 title=f"{select_1} vs {select_2}")
+st.plotly_chart(fig)
+st.divider()
+
+fig = px.line(dfg_o,
+                 x=select_1,
+                 y=select_2,
+                 title=f"{select_1} vs {select_2}")
+st.plotly_chart(fig)
