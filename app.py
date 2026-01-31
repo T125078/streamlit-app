@@ -41,7 +41,9 @@ with st.sidebar:
   st.write("グラフに使うデータ抽出")
   select_1 = st.selectbox("x軸",
                           ["国内総生産(支出側)","民間最終消費支出","家計最終消費支出","民間住宅","民間企業設備","民間在庫変動","政府最終消費支出"])
-  select_2 = st.selectbox("y軸",
+  select_2 = st.selectbox("y軸(1)",
+                          ["国内総生産(支出側)","民間最終消費支出","家計最終消費支出","民間住宅","民間企業設備","民間在庫変動","政府最終消費支出"])
+  select_3 = st.selectbox("y軸(2)",
                           ["国内総生産(支出側)","民間最終消費支出","家計最終消費支出","民間住宅","民間企業設備","民間在庫変動","政府最終消費支出"])
   
 fig = px.scatter(dfg_o,
@@ -51,8 +53,8 @@ fig = px.scatter(dfg_o,
 st.plotly_chart(fig)
 st.divider()
 
-fig = px.line(dfg_o,
+fig = px.scatter(dfg_o,
                  x=select_1,
-                 y=select_2,
-                 title=f"{select_1} vs {select_2}")
+                 y=[select_2,select_3],
+                 title=f"{select_1} vs {select_2} vs {select_3}")
 st.plotly_chart(fig)
