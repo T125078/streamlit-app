@@ -14,17 +14,28 @@ st.title("Webアプリを作ってみた!")
 
 #使い方
 st.subheader("使い方")
-how_to_use = st.selectbox("使い方を知りたい項目を選んでください",["AAA","BBB"])
+st.write("データについて表、グラフで表示でき、その傾向の可視化などができます。")
+how_to_use = st.selectbox("サイドバーの使い方を知りたい項目を選んでください",
+                          ["データフレームに使うデータ抽出","グラフに使うデータ抽出"])
 if st.button("使い方確認"):
-  components.html(f"<script>alert('{how_to_use}の使い方を確認します。')</script>")
+  components.html(f"<script>alert('({how_to_use})の使い方を確認します。')</script>")
+  if how_to_use == "データフレームに使うデータ抽出":
+    st.image("img/usedataflame.png")
+    st.write("データフレーム(表)に出力するデータを複数選択できます。")
+    st.write("年と月から抽出でき、指定した年、月のデータがデータフレームに出力されます。")
+  elif how_to_use == "グラフに使うデータ抽出":
+    st.write("グラフに出力するデータを軸ごとに選択できます。")
+    st.image("img/usegraph.png")
+    st.write("一つ目のグラフはx軸、y軸(1)で選んだ項目について折れ線グラフを作成します。")
+    st.write("二つ目のグラフはx軸、y軸(1)、y軸(2)で選んだ項目について散布図を作成します。")
 
-
+st.divider()
 #データフレーム作成
 df = pd.read_csv("Data.csv")
 
 #データ抽出
 with st.sidebar:
-  st.write("表に使うデータ抽出")
+  st.write("データフレームに使うデータ抽出")
   year = st.multiselect("年",
                           df["year"].unique())
   month = st.multiselect("月",
@@ -32,12 +43,14 @@ with st.sidebar:
 
 df = df[df["year"].isin(year)]
 df = df[df["month"].isin(month)]
+st.write("データフレーム (お金の単位:10億円)")
 st.dataframe(df,width=800,height=220)
 st.divider()
 
 #グラフ用データ抽出
 dfg_o = pd.read_csv("Data.csv")
 with st.sidebar:
+  st.divider()
   st.write("グラフに使うデータ抽出")
   select_1 = st.selectbox("x軸",
                           ["国内総生産(支出側)","民間最終消費支出","家計最終消費支出","民間住宅","民間企業設備","民間在庫変動","政府最終消費支出"])
@@ -45,16 +58,18 @@ with st.sidebar:
                           ["国内総生産(支出側)","民間最終消費支出","家計最終消費支出","民間住宅","民間企業設備","民間在庫変動","政府最終消費支出"])
   select_3 = st.selectbox("y軸(2)",
                           ["国内総生産(支出側)","民間最終消費支出","家計最終消費支出","民間住宅","民間企業設備","民間在庫変動","政府最終消費支出"])
-  
-fig = px.scatter(dfg_o,
+
+#グラフ表示
+fig = px.line(dfg_o,
                  x=select_1,
                  y=select_2,
-                 title=f"{select_1} vs {select_2}")
+                 title=f"{select_1} vs {select_2} (単位:10億円)")
 st.plotly_chart(fig)
+
 st.divider()
 
 fig = px.scatter(dfg_o,
                  x=select_1,
                  y=[select_2,select_3],
-                 title=f"{select_1} vs {select_2} vs {select_3}")
+                 title=f"{select_1} vs {select_2} vs {select_3} (単位:10億円)")
 st.plotly_chart(fig)
